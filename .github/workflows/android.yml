@@ -30,6 +30,9 @@ jobs:
       # 🔥 BUILD SOLO FRONTEND (evita backend roto)
       - name: Build frontend
         run: pnpm --filter ./artifacts/fincagest360 run build
+        env:
+         port: 3000
+         NODE_ENV: production
 
       # 🔥 INSTALAR CAPACITOR
       - name: Instalar Capacitor
