@@ -1,0 +1,1442 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: FincaGest360 API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: dashboard
+    description: Dashboard summaries
+  - name: fincas
+    description: Farm management
+  - name: lotes
+    description: Lot management
+  - name: empleados
+    description: Employee management
+  - name: produccion
+    description: Production tracking
+  - name: finanzas
+    description: Finance management
+  - name: nomina
+    description: Payroll management
+  - name: insumos
+    description: Input/supply management
+  - name: jornadas
+    description: Work day management
+  - name: cosecha
+    description: Harvest management
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getDashboardRecentActivity
+      tags: [dashboard]
+      summary: Get recent activity feed
+      responses:
+        "200":
+          description: Activity list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEvent"
+
+  /dashboard/monthly-revenue:
+    get:
+      operationId: getDashboardMonthlyRevenue
+      tags: [dashboard]
+      summary: Get monthly revenue data for charts
+      responses:
+        "200":
+          description: Monthly revenue
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyRevenue"
+
+  /fincas:
+    get:
+      operationId: listFincas
+      tags: [fincas]
+      summary: List all farms
+      responses:
+        "200":
+          description: List of farms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Finca"
+    post:
+      operationId: createFinca
+      tags: [fincas]
+      summary: Create a farm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFincaBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Finca"
+
+  /fincas/{id}:
+    get:
+      operationId: getFinca
+      tags: [fincas]
+      summary: Get a farm by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Farm
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Finca"
+    put:
+      operationId: updateFinca
+      tags: [fincas]
+      summary: Update a farm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFincaBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Finca"
+    delete:
+      operationId: deleteFinca
+      tags: [fincas]
+      summary: Delete a farm
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /lotes:
+    get:
+      operationId: listLotes
+      tags: [lotes]
+      summary: List all lots
+      parameters:
+        - name: fincaId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of lots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lote"
+    post:
+      operationId: createLote
+      tags: [lotes]
+      summary: Create a lot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLoteBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lote"
+
+  /lotes/{id}:
+    put:
+      operationId: updateLote
+      tags: [lotes]
+      summary: Update a lot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLoteBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lote"
+    delete:
+      operationId: deleteLote
+      tags: [lotes]
+      summary: Delete a lot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /empleados:
+    get:
+      operationId: listEmpleados
+      tags: [empleados]
+      summary: List all employees
+      responses:
+        "200":
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Empleado"
+    post:
+      operationId: createEmpleado
+      tags: [empleados]
+      summary: Create an employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEmpleadoBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empleado"
+
+  /empleados/{id}:
+    get:
+      operationId: getEmpleado
+      tags: [empleados]
+      summary: Get an employee by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empleado"
+    put:
+      operationId: updateEmpleado
+      tags: [empleados]
+      summary: Update an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEmpleadoBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empleado"
+    delete:
+      operationId: deleteEmpleado
+      tags: [empleados]
+      summary: Delete an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /produccion:
+    get:
+      operationId: listProduccion
+      tags: [produccion]
+      summary: List production records
+      parameters:
+        - name: fincaId
+          in: query
+          schema:
+            type: integer
+        - name: loteId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Produccion"
+    post:
+      operationId: createProduccion
+      tags: [produccion]
+      summary: Create production record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProduccionBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Produccion"
+
+  /produccion/{id}:
+    delete:
+      operationId: deleteProduccion
+      tags: [produccion]
+      summary: Delete production record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /produccion/summary:
+    get:
+      operationId: getProduccionSummary
+      tags: [produccion]
+      summary: Get production summary by period
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProduccionSummary"
+
+  /finanzas/ingresos:
+    get:
+      operationId: listIngresos
+      tags: [finanzas]
+      summary: List income records
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ingreso"
+    post:
+      operationId: createIngreso
+      tags: [finanzas]
+      summary: Create income record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateIngresoBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ingreso"
+
+  /finanzas/ingresos/{id}:
+    delete:
+      operationId: deleteIngreso
+      tags: [finanzas]
+      summary: Delete income record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /finanzas/gastos:
+    get:
+      operationId: listGastos
+      tags: [finanzas]
+      summary: List expense records
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Gasto"
+    post:
+      operationId: createGasto
+      tags: [finanzas]
+      summary: Create expense record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGastoBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Gasto"
+
+  /finanzas/gastos/{id}:
+    delete:
+      operationId: deleteGasto
+      tags: [finanzas]
+      summary: Delete expense record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /finanzas/inversiones:
+    get:
+      operationId: listInversiones
+      tags: [finanzas]
+      summary: List investment records
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Inversion"
+    post:
+      operationId: createInversion
+      tags: [finanzas]
+      summary: Create investment record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInversionBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inversion"
+
+  /finanzas/resumen:
+    get:
+      operationId: getFinanzasResumen
+      tags: [finanzas]
+      summary: Get finance summary (totals, balance)
+      responses:
+        "200":
+          description: Finance summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FinanzasResumen"
+
+  /nomina:
+    get:
+      operationId: listNomina
+      tags: [nomina]
+      summary: List payroll records
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NominaRecord"
+    post:
+      operationId: createNomina
+      tags: [nomina]
+      summary: Create payroll record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNominaBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NominaRecord"
+
+  /nomina/{id}:
+    delete:
+      operationId: deleteNomina
+      tags: [nomina]
+      summary: Delete payroll record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /insumos:
+    get:
+      operationId: listInsumos
+      tags: [insumos]
+      summary: List inputs/supplies
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Insumo"
+    post:
+      operationId: createInsumo
+      tags: [insumos]
+      summary: Create input/supply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInsumoBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Insumo"
+
+  /insumos/{id}:
+    delete:
+      operationId: deleteInsumo
+      tags: [insumos]
+      summary: Delete input/supply
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /jornadas:
+    get:
+      operationId: listJornadas
+      tags: [jornadas]
+      summary: List work days
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Jornada"
+    post:
+      operationId: createJornada
+      tags: [jornadas]
+      summary: Create work day
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJornadaBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Jornada"
+
+  /jornadas/{id}:
+    delete:
+      operationId: deleteJornada
+      tags: [jornadas]
+      summary: Delete work day
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /cosecha:
+    get:
+      operationId: listCosecha
+      tags: [cosecha]
+      summary: List harvest records
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cosecha"
+    post:
+      operationId: createCosecha
+      tags: [cosecha]
+      summary: Create harvest record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCosechaBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cosecha"
+
+  /cosecha/{id}:
+    delete:
+      operationId: deleteCosecha
+      tags: [cosecha]
+      summary: Delete harvest record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    DashboardSummary:
+      type: object
+      properties:
+        totalIngresos:
+          type: number
+        totalGastos:
+          type: number
+        balanceNeto:
+          type: number
+        totalFincas:
+          type: integer
+        totalEmpleados:
+          type: integer
+        produccionMesKg:
+          type: number
+        rentabilidad:
+          type: number
+      required:
+        - totalIngresos
+        - totalGastos
+        - balanceNeto
+        - totalFincas
+        - totalEmpleados
+        - produccionMesKg
+        - rentabilidad
+
+    ActivityEvent:
+      type: object
+      properties:
+        id:
+          type: integer
+        tipo:
+          type: string
+        descripcion:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        icono:
+          type: string
+      required:
+        - id
+        - tipo
+        - descripcion
+        - fecha
+
+    MonthlyRevenue:
+      type: object
+      properties:
+        mes:
+          type: string
+        ingresos:
+          type: number
+        gastos:
+          type: number
+        produccion:
+          type: number
+      required:
+        - mes
+        - ingresos
+        - gastos
+        - produccion
+
+    Finca:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        ubicacion:
+          type: string
+        hectareas:
+          type: number
+        cultivo:
+          type: string
+        estado:
+          type: string
+        propietario:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - nombre
+        - ubicacion
+        - hectareas
+        - cultivo
+        - estado
+
+    CreateFincaBody:
+      type: object
+      properties:
+        nombre:
+          type: string
+        ubicacion:
+          type: string
+        hectareas:
+          type: number
+        cultivo:
+          type: string
+        estado:
+          type: string
+        propietario:
+          type: string
+      required:
+        - nombre
+        - ubicacion
+        - hectareas
+        - cultivo
+        - estado
+
+    Lote:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        nombre:
+          type: string
+        hectareas:
+          type: number
+        cultivo:
+          type: string
+        estado:
+          type: string
+      required:
+        - id
+        - fincaId
+        - nombre
+        - hectareas
+        - cultivo
+        - estado
+
+    CreateLoteBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        nombre:
+          type: string
+        hectareas:
+          type: number
+        cultivo:
+          type: string
+        estado:
+          type: string
+      required:
+        - fincaId
+        - nombre
+        - hectareas
+        - cultivo
+        - estado
+
+    Empleado:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        cargo:
+          type: string
+        fincaId:
+          type: integer
+        telefono:
+          type: string
+        salarioBase:
+          type: number
+        estado:
+          type: string
+        fechaIngreso:
+          type: string
+      required:
+        - id
+        - nombre
+        - cargo
+        - salarioBase
+        - estado
+
+    CreateEmpleadoBody:
+      type: object
+      properties:
+        nombre:
+          type: string
+        cargo:
+          type: string
+        fincaId:
+          type: integer
+        telefono:
+          type: string
+        salarioBase:
+          type: number
+        estado:
+          type: string
+        fechaIngreso:
+          type: string
+      required:
+        - nombre
+        - cargo
+        - salarioBase
+        - estado
+
+    Produccion:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        loteId:
+          type: integer
+        fecha:
+          type: string
+        cultivo:
+          type: string
+        cantidadKg:
+          type: number
+        valorUnitario:
+          type: number
+        total:
+          type: number
+        notas:
+          type: string
+      required:
+        - id
+        - fincaId
+        - fecha
+        - cultivo
+        - cantidadKg
+        - valorUnitario
+        - total
+
+    CreateProduccionBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        loteId:
+          type: integer
+        fecha:
+          type: string
+        cultivo:
+          type: string
+        cantidadKg:
+          type: number
+        valorUnitario:
+          type: number
+        notas:
+          type: string
+      required:
+        - fincaId
+        - fecha
+        - cultivo
+        - cantidadKg
+        - valorUnitario
+
+    ProduccionSummary:
+      type: object
+      properties:
+        totalKgMes:
+          type: number
+        totalKgAnio:
+          type: number
+        valorTotalMes:
+          type: number
+        valorTotalAnio:
+          type: number
+        porCultivo:
+          type: array
+          items:
+            type: object
+            properties:
+              cultivo:
+                type: string
+              kg:
+                type: number
+              valor:
+                type: number
+            required:
+              - cultivo
+              - kg
+              - valor
+      required:
+        - totalKgMes
+        - totalKgAnio
+        - valorTotalMes
+        - valorTotalAnio
+        - porCultivo
+
+    Ingreso:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        concepto:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        categoria:
+          type: string
+        notas:
+          type: string
+      required:
+        - id
+        - concepto
+        - monto
+        - fecha
+        - categoria
+
+    CreateIngresoBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        concepto:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        categoria:
+          type: string
+        notas:
+          type: string
+      required:
+        - concepto
+        - monto
+        - fecha
+        - categoria
+
+    Gasto:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        concepto:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        categoria:
+          type: string
+        notas:
+          type: string
+      required:
+        - id
+        - concepto
+        - monto
+        - fecha
+        - categoria
+
+    CreateGastoBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        concepto:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        categoria:
+          type: string
+        notas:
+          type: string
+      required:
+        - concepto
+        - monto
+        - fecha
+        - categoria
+
+    Inversion:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        descripcion:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        tipo:
+          type: string
+        retornoEsperado:
+          type: number
+      required:
+        - id
+        - descripcion
+        - monto
+        - fecha
+        - tipo
+
+    CreateInversionBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        descripcion:
+          type: string
+        monto:
+          type: number
+        fecha:
+          type: string
+        tipo:
+          type: string
+        retornoEsperado:
+          type: number
+      required:
+        - descripcion
+        - monto
+        - fecha
+        - tipo
+
+    FinanzasResumen:
+      type: object
+      properties:
+        totalIngresos:
+          type: number
+        totalGastos:
+          type: number
+        totalInversiones:
+          type: number
+        balanceNeto:
+          type: number
+        rentabilidad:
+          type: number
+        flujoMensual:
+          type: array
+          items:
+            type: object
+            properties:
+              mes:
+                type: string
+              ingresos:
+                type: number
+              gastos:
+                type: number
+            required:
+              - mes
+              - ingresos
+              - gastos
+      required:
+        - totalIngresos
+        - totalGastos
+        - totalInversiones
+        - balanceNeto
+        - rentabilidad
+        - flujoMensual
+
+    NominaRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        empleadoId:
+          type: integer
+        empleadoNombre:
+          type: string
+        periodo:
+          type: string
+        diasTrabajados:
+          type: integer
+        salarioBase:
+          type: number
+        bonificaciones:
+          type: number
+        deducciones:
+          type: number
+        totalPagar:
+          type: number
+        estado:
+          type: string
+        fechaPago:
+          type: string
+      required:
+        - id
+        - empleadoId
+        - empleadoNombre
+        - periodo
+        - diasTrabajados
+        - salarioBase
+        - totalPagar
+        - estado
+
+    CreateNominaBody:
+      type: object
+      properties:
+        empleadoId:
+          type: integer
+        periodo:
+          type: string
+        diasTrabajados:
+          type: integer
+        salarioBase:
+          type: number
+        bonificaciones:
+          type: number
+        deducciones:
+          type: number
+        estado:
+          type: string
+        fechaPago:
+          type: string
+      required:
+        - empleadoId
+        - periodo
+        - diasTrabajados
+        - salarioBase
+        - estado
+
+    Insumo:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        nombre:
+          type: string
+        tipo:
+          type: string
+        cantidad:
+          type: number
+        unidad:
+          type: string
+        costoUnitario:
+          type: number
+        proveedor:
+          type: string
+        fechaCompra:
+          type: string
+        stockMinimo:
+          type: number
+      required:
+        - id
+        - nombre
+        - tipo
+        - cantidad
+        - unidad
+        - costoUnitario
+
+    CreateInsumoBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        nombre:
+          type: string
+        tipo:
+          type: string
+        cantidad:
+          type: number
+        unidad:
+          type: string
+        costoUnitario:
+          type: number
+        proveedor:
+          type: string
+        fechaCompra:
+          type: string
+        stockMinimo:
+          type: number
+      required:
+        - nombre
+        - tipo
+        - cantidad
+        - unidad
+        - costoUnitario
+
+    Jornada:
+      type: object
+      properties:
+        id:
+          type: integer
+        empleadoId:
+          type: integer
+        empleadoNombre:
+          type: string
+        fincaId:
+          type: integer
+        fecha:
+          type: string
+        horasRegulares:
+          type: number
+        horasExtra:
+          type: number
+        actividad:
+          type: string
+        notas:
+          type: string
+      required:
+        - id
+        - empleadoId
+        - fincaId
+        - fecha
+        - horasRegulares
+        - actividad
+
+    CreateJornadaBody:
+      type: object
+      properties:
+        empleadoId:
+          type: integer
+        fincaId:
+          type: integer
+        fecha:
+          type: string
+        horasRegulares:
+          type: number
+        horasExtra:
+          type: number
+        actividad:
+          type: string
+        notas:
+          type: string
+      required:
+        - empleadoId
+        - fincaId
+        - fecha
+        - horasRegulares
+        - actividad
+
+    Cosecha:
+      type: object
+      properties:
+        id:
+          type: integer
+        fincaId:
+          type: integer
+        loteId:
+          type: integer
+        fecha:
+          type: string
+        cultivo:
+          type: string
+        cantidadKg:
+          type: number
+        calidad:
+          type: string
+        responsable:
+          type: string
+        precioVenta:
+          type: number
+        comprador:
+          type: string
+        notas:
+          type: string
+      required:
+        - id
+        - fincaId
+        - fecha
+        - cultivo
+        - cantidadKg
+        - calidad
+
+    CreateCosechaBody:
+      type: object
+      properties:
+        fincaId:
+          type: integer
+        loteId:
+          type: integer
+        fecha:
+          type: string
+        cultivo:
+          type: string
+        cantidadKg:
+          type: number
+        calidad:
+          type: string
+        responsable:
+          type: string
+        precioVenta:
+          type: number
+        comprador:
+          type: string
+        notas:
+          type: string
+      required:
+        - fincaId
+        - fecha
+        - cultivo
+        - cantidadKg
+        - calidad
